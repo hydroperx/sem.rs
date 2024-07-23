@@ -118,7 +118,7 @@ impl Parse for SmTypeTree {
             data_types.push(Rc::new(input.parse::<SmType>()?));
         }
         Ok(Self {
-            smodel_path: smodel_path.map(|p| p.to_token_stream()).unwrap_or(proc_macro2::TokenStream::from_str("::smodel").unwrap()),
+            smodel_path: smodel_path.map(|p| p.to_token_stream()).unwrap_or(proc_macro2::TokenStream::from_str("::hydroperfox_smodel").unwrap()),
             arena_type_name,
             data_types,
         })
