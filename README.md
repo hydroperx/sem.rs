@@ -121,7 +121,3 @@ pub override fn m(&self) {
 ## Method parameters
 
 For now, the name of method parameters in overriden methods should match these of subtype methods, otherwise a macro hygiene error may occur indicating that the parameter does not exist in the subtype's method.
-
-## License
-
-Apache 2.0, copyright © Hydroper
