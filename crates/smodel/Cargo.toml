@@ -1,0 +1,19 @@
+[package]
+name = "hydroperfox-smodel"
+version = "1.0.0"
+edition = "2021"
+authors = ["hydroperfox <hydroperfox@gmail.com>"]
+repository = "https://github.com/hydroperfox/rustsmodel"
+license = "Apache-2.0"
+description = "Semantic modeling for Rust."
+keywords = ["symbol", "semantics", "model", "class", "inheritance"]
+categories = ["data-structures"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hydroperfox-smodel-proc = { path = "../smodel-proc", version = "1" }
+by_address = "1.1.0"
+# lazy-regex = "3.0.1"
+# maplit = "1.0.2"
+# once_cell = "1.18.0"
