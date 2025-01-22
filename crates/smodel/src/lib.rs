@@ -21,6 +21,21 @@ impl<T> Arena<T> {
         self.data.borrow_mut().push(obj.clone());
         Rc::downgrade(&obj)
     }
+
+    /// Frees dead objects from the arena. Note that a call to `clean()`
+    /// may be expensive; therefore it is recommended to call it after a long
+    /// processing has been done with the arena.
+    pub fn clean(&self) {
+        let mut data = self.data.borrow_mut();
+        let mut i = data.len();
+        while i != 0 {
+            i -= 1;
+            let obj = data.get(i).unwrap();
+            if Rc::weak_count(obj) == 0 && Rc::strong_count(obj) == 1 {
+                data.remove(i);
+            }
+        }
+    }
 }
 
 #[derive(Debug)]
