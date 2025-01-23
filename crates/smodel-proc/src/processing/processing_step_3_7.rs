@@ -22,7 +22,7 @@ impl ProcessingStep3_7 {
 
         // If the type inherits another type:
         //
-        // * At the constructor code, invoke `InheritedM::#ctor_init_name_id(&__cto1.0, ...super_arguments)`,
+        // * At the constructor code, invoke `InheritedM::#ctor_init_name_id(&self.0, ...super_arguments)`,
         //   passing all `super(...)` arguments.
         let mut super_code = proc_macro2::TokenStream::new();
         if let Some(inherited_m) = smtype.inherits() {
@@ -34,7 +34,7 @@ impl ProcessingStep3_7 {
         }
 
         // Define the the instance `#ctor_init_name_id` method,
-        // containing everything but `super()` and structure initialization.
+        // containing super invokation code and structure initialization.
         let statements = node.map(|node| node.statements.clone()).unwrap_or(vec![]);
         smtype.method_output().borrow_mut().extend(quote! {
             #(#attr)*
