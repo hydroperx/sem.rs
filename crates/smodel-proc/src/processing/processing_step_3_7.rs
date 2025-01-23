@@ -20,12 +20,26 @@ impl ProcessingStep3_7 {
         let ctor_init_name_id = Ident::new(CTOR_INIT_NAME, node.map(|node| node.name.span()).unwrap_or(Span::call_site()));
         let arena_type_name_id = Ident::new(arena_type_name, Span::call_site());
 
+        // If the type inherits another type:
+        //
+        // * At the constructor code, invoke `InheritedM::#ctor_init_name_id(&__cto1.0, ...super_arguments)`,
+        //   passing all `super(...)` arguments.
+        let mut super_code = proc_macro2::TokenStream::new();
+        if let Some(inherited_m) = smtype.inherits() {
+            let inherited_m_name = Ident::new(&inherited_m.name(), Span::call_site());
+            let super_arguments = node.map(|node| node.super_arguments.clone()).unwrap_or(Punctuated::new());
+            super_code.extend::<proc_macro2::TokenStream>(quote! {
+                #inherited_m_name::#ctor_init_name_id(&self.0, #super_arguments);
+            }.try_into().unwrap());
+        }
+
         // Define the the instance `#ctor_init_name_id` method,
         // containing everything but `super()` and structure initialization.
         let statements = node.map(|node| node.statements.clone()).unwrap_or(vec![]);
         smtype.method_output().borrow_mut().extend(quote! {
             #(#attr)*
             fn #ctor_init_name_id #(#type_params)*(&self, #input) #where_clause {
+                #super_code
                 #(#statements)*
             }
         });
@@ -41,18 +55,6 @@ impl ProcessingStep3_7 {
         m_new_out.extend::<TokenStream>(quote! {
             let __cto1 = #initlayer2;
         }.try_into().unwrap());
-
-        // If the type inherits another type:
-        //
-        // * At `M::new`, invoke `InheritedM::#ctor_init_name_id(&__cto1.0, ...super_arguments)`,
-        //   passing all `super(...)` arguments.
-        if let Some(inherited_m) = smtype.inherits() {
-            let inherited_m_name = Ident::new(&inherited_m.name(), Span::call_site());
-            let super_arguments = node.map(|node| node.super_arguments.clone()).unwrap_or(Punctuated::new());
-            m_new_out.extend::<TokenStream>(quote! {
-                #inherited_m_name::#ctor_init_name_id(&__cto1.0, #super_arguments);
-            }.try_into().unwrap());
-        }
 
         // * Output a `__cto1.#ctor_init_name_id(...arguments);` call to `M::new`.
         // * Output a `__cto1` return to `M::new`.

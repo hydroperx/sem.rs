@@ -10,7 +10,7 @@ checksum = "bf8dba2868114ed769a1f2590fc9ae5eb331175b44313b6c9b922f8f7ca813d0"
 
 [[package]]
 name = "hydroperfox-smodel"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "by_address",
  "hydroperfox-smodel-proc",
@@ -18,7 +18,7 @@ dependencies = [
 
 [[package]]
 name = "hydroperfox-smodel-proc"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "by_address",
  "proc-macro2",
