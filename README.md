@@ -13,7 +13,7 @@ If you define `struct`s in any order, you may get a *not found* error that termi
 The basemost data type is the one that comes first. You may name it according to your tastes. You may usually call it *symbol* or *thingy* (according to a Microsoft Roslyn's engineer, *symbol* ought to be called *thingy*).
 
 ```rust
-use hydroperfox_smodel::smodel;
+use realhydroper_smodel::smodel;
 
 smodel! {
     type Arena = Arena;

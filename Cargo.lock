@@ -9,24 +9,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bf8dba2868114ed769a1f2590fc9ae5eb331175b44313b6c9b922f8f7ca813d0"
 
 [[package]]
-name = "hydroperfox-smodel"
-version = "1.0.2"
-dependencies = [
- "by_address",
- "hydroperfox-smodel-proc",
-]
-
-[[package]]
-name = "hydroperfox-smodel-proc"
-version = "1.0.2"
-dependencies = [
- "by_address",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "proc-macro2"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -42,6 +24,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5267fca4496028628a95160fc423a33e8b2e6af8a5302579e322e4b520293cae"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "realhydroper-smodel"
+version = "1.0.0"
+dependencies = [
+ "by_address",
+ "realhydroper-smodel-proc",
+]
+
+[[package]]
+name = "realhydroper-smodel-proc"
+version = "1.0.0"
+dependencies = [
+ "by_address",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

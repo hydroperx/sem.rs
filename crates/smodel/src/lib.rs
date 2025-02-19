@@ -3,7 +3,7 @@ use std::fmt::Debug;
 
 pub mod util;
 
-pub use hydroperfox_smodel_proc::smodel;
+pub use realhydroper_smodel_proc::smodel;
 
 pub struct Arena<T> {
     data: RefCell<Vec<Rc<T>>>,
