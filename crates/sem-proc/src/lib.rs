@@ -54,7 +54,7 @@ const DATA_VARIANT_PREFIX: &'static str = "__variant_";
 const DATA_VARIANT_NO_SUBTYPE: &'static str = "__Nothing";
 
 struct SmTypeTree {
-    smodel_path: proc_macro2::TokenStream,
+    sem_path: proc_macro2::TokenStream,
     arena_type_name: proc_macro2::TokenStream,
     data_types: Vec<Rc<SmType>>,
 }
@@ -104,12 +104,12 @@ struct SmTypeMethod {
 
 impl Parse for SmTypeTree {
     fn parse(input: ParseStream) -> Result<Self> {
-        let mut smodel_path: Option<Path> = None;
+        let mut sem_path: Option<Path> = None;
         if input.peek(Token![mod]) {
             input.parse::<Token![mod]>()?;
             input.parse::<Ident>()?;
             input.parse::<Token![=]>()?;
-            smodel_path = Some(parse_full_qualified_id(input)?);
+            sem_path = Some(parse_full_qualified_id(input)?);
             input.parse::<Token![;]>()?;
         }
         let arena_type_name = parse_smtype_arena_type_name(input)?.to_token_stream();
@@ -118,7 +118,7 @@ impl Parse for SmTypeTree {
             data_types.push(Rc::new(input.parse::<SmType>()?));
         }
         Ok(Self {
-            smodel_path: smodel_path.map(|p| p.to_token_stream()).unwrap_or(proc_macro2::TokenStream::from_str("::realhydroper_smodel").unwrap()),
+            sem_path: sem_path.map(|p| p.to_token_stream()).unwrap_or(proc_macro2::TokenStream::from_str("::hydroperx_sem").unwrap()),
             arena_type_name,
             data_types,
         })
@@ -286,12 +286,12 @@ fn parse_smtype_arena_type_name(input: ParseStream) -> Result<Path> {
 }
 
 #[proc_macro]
-pub fn smodel(input: TokenStream) -> TokenStream {
+pub fn sem(input: TokenStream) -> TokenStream {
     let SmTypeTree {
-        smodel_path, arena_type_name, data_types
+        sem_path, arena_type_name, data_types
     } = parse_macro_input!(input as SmTypeTree);
 
-    let mut host = SModelHost::new();
+    let mut host = SemHost::new();
 
     // # Validations
 
@@ -324,7 +324,7 @@ pub fn smodel(input: TokenStream) -> TokenStream {
 
     // 1. Output the arena type.
     host.output.extend::<TokenStream>(quote! {
-        pub type #arena_type_name = #smodel_path::Arena<#data_id::#base_smtype_data_name>;
+        pub type #arena_type_name = #sem_path::Arena<#data_id::#base_smtype_data_name>;
     }.try_into().unwrap());
 
     // 2. Traverse each type in a first pass.
@@ -399,7 +399,7 @@ pub fn smodel(input: TokenStream) -> TokenStream {
         });
 
         // 3.6. Define the structure M
-        ProcessingStep3_6().exec(&mut host, &smtype_node, &smtype, &base_accessor, &smodel_path);
+        ProcessingStep3_6().exec(&mut host, &smtype_node, &smtype, &base_accessor, &sem_path);
 
         // 3.7. Define the constructor
         ProcessingStep3_7().exec(&mut host, smtype_node.constructor.as_ref(), &smtype, &asc_smtype_list, &arena_type_name.to_string());
@@ -429,10 +429,10 @@ pub fn smodel(input: TokenStream) -> TokenStream {
         // * Contribute a `to::<T: TryFrom<M>>()` method.
         // * Contribute an `is::<T>()` method.
         smtype.method_output().borrow_mut().extend(quote! {
-            pub fn to<T: TryFrom<#smtype_name_id, Error = #smodel_path::SModelError>>(&self) -> Result<T, #smodel_path::SModelError> {
+            pub fn to<T: TryFrom<#smtype_name_id, Error = #sem_path::SemError>>(&self) -> Result<T, #sem_path::SemError> {
                 T::try_from(self.clone())
             }
-            pub fn is<T: TryFrom<#smtype_name_id, Error = #smodel_path::SModelError>>(&self) -> bool {
+            pub fn is<T: TryFrom<#smtype_name_id, Error = #sem_path::SemError>>(&self) -> bool {
                 T::try_from(self.clone()).is_ok()
             }
         });

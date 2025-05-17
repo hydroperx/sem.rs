@@ -3,7 +3,7 @@ use crate::*;
 pub struct ProcessingStep3_2();
 
 impl ProcessingStep3_2 {
-    pub fn exec(&self, host: &mut SModelHost, smtype: &Symbol, field: &Rc<SmTypeField>, base_accessor: &str, asc_smtype_list: &[Symbol], field_output: &mut proc_macro2::TokenStream) -> bool {
+    pub fn exec(&self, host: &mut SemHost, smtype: &Symbol, field: &Rc<SmTypeField>, base_accessor: &str, asc_smtype_list: &[Symbol], field_output: &mut proc_macro2::TokenStream) -> bool {
         // 1. Create a FieldSlot.
         let slot = host.factory.create_field_slot(field.is_ref, field.name.to_string(), field.type_annotation.clone(), field.default_value.clone());
 
@@ -35,7 +35,7 @@ impl ProcessingStep3_2 {
         true
     }
 
-    fn define_accessors(&self, _host: &mut SModelHost, smtype: &Symbol, slot: &Symbol, field_name: &str, field_type: &Type, base_accessor: &str, asc_smtype_list: &[Symbol]) {
+    fn define_accessors(&self, _host: &mut SemHost, smtype: &Symbol, slot: &Symbol, field_name: &str, field_type: &Type, base_accessor: &str, asc_smtype_list: &[Symbol]) {
         let getter_name = Ident::new(&field_name, Span::call_site());
         let setter_name = Ident::new(&format!("set_{}", field_name), Span::call_site());
         let fv = proc_macro2::TokenStream::from_str(&self.match_field(asc_smtype_list, 0, &format!("{base_accessor}.upgrade().unwrap()"), field_name)).unwrap();

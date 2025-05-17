@@ -4,7 +4,7 @@ pub struct ProcessingStep4_1();
 
 impl ProcessingStep4_1 {
     // Process a method
-    pub fn exec(&self, host: &mut SModelHost, node: &Rc<SmTypeMethod>, smtype: &Symbol) {
+    pub fn exec(&self, host: &mut SemHost, node: &Rc<SmTypeMethod>, smtype: &Symbol) {
         // Skip if it is not mapped to an instance method slot.
         let Some(slot) = host.semantics.get(node) else {
             return;

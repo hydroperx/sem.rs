@@ -3,7 +3,7 @@ use crate::*;
 pub struct ProcessingStep2();
 
 impl ProcessingStep2 {
-    pub fn exec(&self, host: &mut SModelHost, m: &Rc<SmType>) -> bool {
+    pub fn exec(&self, host: &mut SemHost, m: &Rc<SmType>) -> bool {
         // 1. Create a SmTypeSlot.
         let slot = host.factory.create_smtype_slot(m.name.to_string());
 

@@ -1,6 +1,8 @@
-# SModel
+# hydroperx::sem
 
-SModel (Semantic Modeling) for Rust provides a friendly way to describe semantic symbols of a language using dynamic dispatches and hierarchy definitions using an arena that allows for circular references.
+Build semantic entities. For Rust.
+
+Sem for Rust allows to describe semantic entities of a language model using dynamic dispatches and hierarchic definitions using an arena that allows for circular references.
 
 ## Definition order
 
@@ -10,19 +12,19 @@ If you define `struct`s in any order, you may get a *not found* error that termi
 
 ## Example
 
-The basemost data type is the one that comes first. You may name it according to your tastes. You may usually call it *symbol* or *thingy* (according to a Microsoft Roslyn's engineer, *symbol* ought to be called *thingy*).
+The basemost data type is the one that comes first: in the following example, `Entity`.
 
 ```rust
-use realhydroper_smodel::smodel;
+use hydroperx_sem::sem;
 
-smodel! {
+sem! {
     type Arena = Arena;
 
-    struct Thingy {
+    struct Entity {
         let x: f64 = 0.0;
         let ref y: String = "".into();
 
-        pub fn Thingy() {
+        pub fn Entity() {
             super();
             println!("{}", self.m());
         }
@@ -36,7 +38,7 @@ smodel! {
         }
     }
 
-    struct Foo: Thingy {
+    struct Foo: Entity {
         pub fn Foo() {
             super();
         }
@@ -55,8 +57,8 @@ smodel! {
 
 fn main() {
     let arena = Arena::new();
-    let thingy = Foo::new(&arena);
-    println!("{}", thingy.m());
+    let entity = Foo::new(&arena);
+    println!("{}", entity.m());
 }
 ```
 

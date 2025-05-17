@@ -7,7 +7,7 @@ pub struct ProcessingStep3_8();
 
 impl ProcessingStep3_8 {
     // Process a method
-    pub fn exec(&self, host: &mut SModelHost, node: &Rc<SmTypeMethod>, smtype: &Symbol) -> bool {
+    pub fn exec(&self, host: &mut SemHost, node: &Rc<SmTypeMethod>, smtype: &Symbol) -> bool {
         let input = &node.inputs;
         let type_params = [node.generics.lt_token.to_token_stream(), node.generics.params.to_token_stream(), node.generics.gt_token.to_token_stream()];
         let where_clause = node.generics.where_clause.as_ref().map(|c| c.to_token_stream()).unwrap_or(proc_macro2::TokenStream::new());

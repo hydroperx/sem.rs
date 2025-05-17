@@ -1,6 +1,6 @@
 use crate::*;
 
-pub struct SModelHost {
+pub struct SemHost {
     pub factory: LmtFactory,
     pub semantics: TreeSemantics<Symbol>,
     pub smtype_slots: HashMap<String, Symbol>,
@@ -8,7 +8,7 @@ pub struct SModelHost {
     pub data_output: proc_macro2::TokenStream,
 }
 
-impl SModelHost {
+impl SemHost {
     pub fn new() -> Self {
         Self {
             factory: LmtFactory::new(),

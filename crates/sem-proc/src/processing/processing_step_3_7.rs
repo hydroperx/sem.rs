@@ -6,7 +6,7 @@ pub struct ProcessingStep3_7();
 
 impl ProcessingStep3_7 {
     // Define the constructor
-    pub fn exec(&self, _host: &mut SModelHost, node: Option<&SmTypeConstructor>, smtype: &Symbol, asc_smtype_list: &[Symbol], arena_type_name: &str) {
+    pub fn exec(&self, _host: &mut SemHost, node: Option<&SmTypeConstructor>, smtype: &Symbol, asc_smtype_list: &[Symbol], arena_type_name: &str) {
         let input = node.map(|node| node.inputs.clone()).unwrap_or(Punctuated::new());
         let type_params = node.map(|node| [node.generics.lt_token.to_token_stream(), node.generics.params.to_token_stream(), node.generics.gt_token.to_token_stream()]).unwrap_or([
             proc_macro2::TokenStream::new(),

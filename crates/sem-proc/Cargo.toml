@@ -1,11 +1,11 @@
 [package]
-name = "realhydroper-smodel-proc"
+name = "hydroperx-sem-proc"
 version = "1.0.0"
 edition = "2021"
-authors = ["realhydroper <hydroperfox@gmail.com>"]
-repository = "https://github.com/realhydroper/rustsmodel"
+authors = ["hydroperx <hydroperfox@gmail.com>"]
+repository = "https://github.com/hydroperx/sem.rs"
 license = "Apache-2.0"
-description = "Semantic modeling for Rust: procedural macros."
+description = "Semantic entities for Rust: procedural macros."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

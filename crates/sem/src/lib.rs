@@ -3,7 +3,7 @@ use std::fmt::Debug;
 
 pub mod util;
 
-pub use realhydroper_smodel_proc::smodel;
+pub use hydroperx_sem_proc::sem;
 
 pub struct Arena<T> {
     data: RefCell<Vec<Rc<T>>>,
@@ -39,7 +39,7 @@ impl<T> Arena<T> {
 }
 
 #[derive(Debug)]
-pub enum SModelError {
+pub enum SemError {
     Contravariant,
 }
 
@@ -47,16 +47,16 @@ pub enum SModelError {
 mod test {
     #[test]
     fn test() {
-        use crate::smodel;
+        use crate::sem;
 
-        smodel! {
-            mod smodel = crate;
+        sem! {
+            mod sem = crate;
 
             type Arena = Arena;
         
             /// My unified data type.
-            struct Thingy {
-                pub fn Thingy() {
+            struct Entity {
+                pub fn Entity() {
                     super();
                 }
         
@@ -74,7 +74,7 @@ mod test {
                 }
             }
         
-            struct Foo: Thingy {
+            struct Foo: Entity {
                 pub fn Foo() {
                     super();
                 }
@@ -139,7 +139,7 @@ mod test {
         let arena = Arena::new();
 
         let symbol = Foo::new(&arena);
-        let base_symbol: Thingy = symbol.into();
+        let base_symbol: Entity = symbol.into();
         assert_eq!("Foo", base_symbol.name());
         assert_eq!(true, base_symbol.is::<Foo>());
         assert_eq!(false, base_symbol.is::<FooBar>());
@@ -148,7 +148,7 @@ mod test {
         assert_eq!(0.0, base_symbol.x());
 
         let symbol = FooBar::new(&arena);
-        let base_symbol: Thingy = symbol.into();
+        let base_symbol: Entity = symbol.into();
         assert_eq!("FooBar", base_symbol.name());
         assert_eq!(true, base_symbol.is::<Foo>());
         assert_eq!(true, base_symbol.is::<FooBar>());
@@ -158,7 +158,7 @@ mod test {
         assert_eq!(0.0, base_symbol.x());
 
         let symbol = FooBarBar::new(&arena, 10.0, "bar bar");
-        let base_symbol: Thingy = symbol.into();
+        let base_symbol: Entity = symbol.into();
         assert_eq!("FooBarBar", base_symbol.name());
         assert_eq!(true, base_symbol.is::<Foo>());
         assert_eq!(true, base_symbol.is::<FooBar>());
@@ -168,7 +168,7 @@ mod test {
         assert_eq!(10.0, base_symbol.x());
 
         let symbol = FooQux::new(&arena);
-        let base_symbol: Thingy = symbol.into();
+        let base_symbol: Entity = symbol.into();
         assert_eq!("FooQux", base_symbol.name());
         assert_eq!(true, base_symbol.is::<Foo>());
         assert_eq!(false, base_symbol.is::<FooBar>());

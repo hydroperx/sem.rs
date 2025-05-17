@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/smodel",
-    "crates/smodel-proc",
+    "crates/sem",
+    "crates/sem-proc",
 ]

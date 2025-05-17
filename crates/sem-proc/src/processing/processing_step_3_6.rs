@@ -3,7 +3,7 @@ use crate::*;
 pub struct ProcessingStep3_6();
 
 impl ProcessingStep3_6 {
-    pub fn exec(&self, host: &mut SModelHost, node: &Rc<SmType>, smtype: &Symbol, base_accessor: &str, smodel_path: &proc_macro2::TokenStream) {
+    pub fn exec(&self, host: &mut SemHost, node: &Rc<SmType>, smtype: &Symbol, base_accessor: &str, sem_path: &proc_macro2::TokenStream) {
         let smtype_name_debug = format!("{}()", smtype.name());
         let smtype_name = node.name.clone();
         let attributes = node.attributes.clone();
@@ -90,18 +90,18 @@ impl ProcessingStep3_6 {
 
         // Output a TryFrom<M> for SubtypeM implementation (contravariant conversion)
         for sm in smtype.subtypes().iter() {
-            self.contravariance(host, &base_accessor.replacen("self", "v", 1), smtype, &sm, smodel_path);
+            self.contravariance(host, &base_accessor.replacen("self", "v", 1), smtype, &sm, sem_path);
         }
     }
 
-    fn contravariance(&self, host: &mut SModelHost, base_accessor: &str, base_smtype: &Symbol, subtype: &Symbol, smodel_path: &proc_macro2::TokenStream) {
+    fn contravariance(&self, host: &mut SemHost, base_accessor: &str, base_smtype: &Symbol, subtype: &Symbol, sem_path: &proc_macro2::TokenStream) {
         let base_smtype_name = Ident::new(&base_smtype.name(), Span::call_site());
         let subtype_name = Ident::new(&subtype.name(), Span::call_site());
-        let m = proc_macro2::TokenStream::from_str(&self.match_contravariant(&subtype.asc_smtype_list(), 0, &format!("{base_accessor}.upgrade().unwrap()"), &base_accessor, smodel_path)).unwrap();
+        let m = proc_macro2::TokenStream::from_str(&self.match_contravariant(&subtype.asc_smtype_list(), 0, &format!("{base_accessor}.upgrade().unwrap()"), &base_accessor, sem_path)).unwrap();
 
         host.output.extend::<TokenStream>(quote! {
             impl TryFrom<#base_smtype_name> for #subtype_name {
-                type Error = #smodel_path::SModelError;
+                type Error = #sem_path::SemError;
                 fn try_from(v: #base_smtype_name) -> Result<Self, Self::Error> {
                     #m
                 }
@@ -109,7 +109,7 @@ impl ProcessingStep3_6 {
         }.try_into().unwrap());
 
         for sm1 in subtype.subtypes().iter() {
-            self.contravariance(host, base_accessor, base_smtype, &sm1, smodel_path);
+            self.contravariance(host, base_accessor, base_smtype, &sm1, sem_path);
         }
     }
 
@@ -117,7 +117,7 @@ impl ProcessingStep3_6 {
     /// 
     /// * `base` is assumed to be a `Rc<#DATA::M>` value.
     /// * `original_base` is assumed to be a `Weak<#DATA::FirstM>` value.
-    fn match_contravariant(&self, asc_smtype_list: &[Symbol], smtype_index: usize, base: &str, original_base: &str, smodel_path: &proc_macro2::TokenStream) -> String {
+    fn match_contravariant(&self, asc_smtype_list: &[Symbol], smtype_index: usize, base: &str, original_base: &str, sem_path: &proc_macro2::TokenStream) -> String {
         let (smtype, inherited) = if smtype_index + 1 >= asc_smtype_list.len() {
             (asc_smtype_list[smtype_index].clone(), None)
         } else {
@@ -127,10 +127,10 @@ impl ProcessingStep3_6 {
         let Some(inherited) = inherited else {
             return format!("Ok({})", Symbol::create_layers_over_weak_root(original_base, asc_smtype_list));
         };
-        format!("if let {DATA}::{}::{}(_o) = &{base}.{DATA_VARIANT_FIELD} {{ {} }} else {{ Err({}::SModelError::Contravariant) }}",
+        format!("if let {DATA}::{}::{}(_o) = &{base}.{DATA_VARIANT_FIELD} {{ {} }} else {{ Err({}::SemError::Contravariant) }}",
             DATA_VARIANT_PREFIX.to_owned() + &inherited.name(),
             DATA_PREFIX.to_owned() + &smtype.name(),
-            self.match_contravariant(asc_smtype_list, smtype_index + 1, "_o", original_base, smodel_path),
-            smodel_path.to_string())
+            self.match_contravariant(asc_smtype_list, smtype_index + 1, "_o", original_base, sem_path),
+            sem_path.to_string())
     }
 }
